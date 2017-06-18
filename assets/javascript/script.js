@@ -58,37 +58,34 @@ var addTrain = function(event) {
 
 database.ref().on("child_added", function(snapshot){
 
-	var newRow = $("<div>");
-	newRow.addClass("row");
-		var addTrain = $("<div col-md-4>");
-		var addLine = $("<div col-md-1>");
-		var addDestination = $("<div col-md-2>");
-		var addFrequency = $("<div col-md-1>");
-		var nextArrival = $("<div col-md-2>");
-		var minutesAway = $("<div col-md-2>");
 
-	newRow.append(addTrain);
-	addTrain.html(snapshot.val().train);
-	
-	
-	newRow.append(addLine);
-	addLine.html(snapshot.val().line);
-	
-	
-	// addDestination.html(snapshot.val().destination);
-	// newRow.append(addDestination);
+	var newTableRow = $("<tr>");
 
-	// addFrequency.html(snapshot.val().frequency);
-	// newRow.append(addFrequency);
+	var newTrain = $("<td>");
+	newTrain.html(snapshot.val().train);
+	newTableRow.append(newTrain);
 
-	// nextArrival.html(snapshot.val().arrival);
-	// newRow.append(nextArrival);
+	var newLine = $("<td>");
+	newLine.html(snapshot.val().line);
+	newTableRow.append(newLine);
 
-	// minitesAway.html(snapshot.val().ETA);
-	// newRow.append(minutesAway);
+	var newDestination = $("<td>");
+	newDestination.html(snapshot.val().destination);
+	newTableRow.append(newDestination);
 
-	$("#currentTrains").append(newRow);
-	$("#currentTrains").append("<hr>");
+	var newFrequency = $("<td>");
+	newFrequency.html(snapshot.val().frequency);
+	newTableRow.append(newFrequency);
+
+	var newNextArrival = $("<td>");
+	newNextArrival.html("minutes");
+	newTableRow.append(newNextArrival);
+
+	var newMinutesAway = $("<td>");
+	newMinutesAway.html("minutes");
+	newTableRow.append(newMinutesAway);
+
+	$("#trainTable").append(newTableRow);
 
 }, function(error) {
 	console.log("Errors Handled: " + error.code);
