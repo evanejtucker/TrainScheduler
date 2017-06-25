@@ -19,8 +19,6 @@ $(document).ready(function(){
 
 
 
-
-
 // Functions
 // -------------------------------------------------------------------------------------------------
 
@@ -28,6 +26,7 @@ var addTrain = function(event) {
 	// keeps the page from reloading on the button click
 	event.preventDefault();
 
+	// captures user input form data 
 	var train = $("#trainName").val().trim();
 	var line = $("#line").val().trim();
 	var destination = $("#destination").val().trim();
@@ -43,6 +42,7 @@ var addTrain = function(event) {
 		frequency: frequency
     });
 
+	// clears form after data is pushed
 	$("#trainName").val("");
 	$("#line").val("");
 	$("#destination").val("");
@@ -58,7 +58,22 @@ var addTrain = function(event) {
 
 database.ref().on("child_added", function(snapshot){
 
+		// moment.js calculations
+		var a = snapshot.val();
 
+		var firstTime = moment(a.first, "HH:mm").subtract(10, "years").format("x");
+
+		if (firstTime >= 0) {
+			firstTrain = firstTime * -1; 
+		}else {
+			firstTrain = firstTime;
+		}
+
+		var minsDifferent = moment().diff(moment.unix(firstTrain), "minutes");
+		var minsAway = minsDifferent % a.frequency;
+		var nextArrival = moment().add(minsAway, "m").format("HH:mm");
+
+	// adds table elements, and populates them with correct data from firebase
 	var newTableRow = $("<tr>");
 
 	var newTrain = $("<td>");
@@ -78,11 +93,11 @@ database.ref().on("child_added", function(snapshot){
 	newTableRow.append(newFrequency);
 
 	var newNextArrival = $("<td>");
-	newNextArrival.html("minutes");
+	newNextArrival.html(nextArrival);
 	newTableRow.append(newNextArrival);
 
 	var newMinutesAway = $("<td>");
-	newMinutesAway.html("minutes");
+	newMinutesAway.html(minsAway);
 	newTableRow.append(newMinutesAway);
 
 	$("#trainTable").append(newTableRow);
@@ -91,6 +106,7 @@ database.ref().on("child_added", function(snapshot){
 	console.log("Errors Handled: " + error.code);
 });
 
+// adds new train data to firebase, and table on submit button click
 $("#submitButton").on("click", addTrain);
 
 
